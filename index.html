@@ -38,7 +38,7 @@
   }
 
   header {
-    padding: 1.5rem 2rem;
+    padding: 1.25rem 2rem;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
@@ -52,11 +52,7 @@
     color: var(--accent2);
     letter-spacing: -0.02em;
   }
-
-  .logo span {
-    color: var(--text-muted);
-    font-weight: 400;
-  }
+  .logo span { color: var(--text-muted); font-weight: 400; }
 
   .badge {
     font-size: 0.65rem;
@@ -69,41 +65,69 @@
     letter-spacing: 0.05em;
   }
 
-  main {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    max-height: calc(100vh - 65px);
-  }
+  .header-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
 
-  .panel {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    overflow-y: auto;
-  }
-
-  .panel-left { border-right: 1px solid var(--border); }
-
-  .panel-title {
+  .key-status {
+    font-size: 0.72rem;
     font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    color: var(--text-faint);
-    text-transform: uppercase;
-  }
-
-  .api-row {
     display: flex;
-    gap: 8px;
     align-items: center;
+    gap: 6px;
+    color: var(--text-faint);
+    transition: color 0.2s;
+  }
+  .key-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--text-faint);
+    transition: background 0.2s;
+  }
+  .key-status.set { color: var(--green); }
+  .key-status.set .key-dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+  .settings-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.2s;
+  }
+  .settings-btn:hover { border-color: var(--border-bright); color: var(--text); }
+  .settings-btn.active { border-color: var(--accent); color: var(--accent2); background: var(--accent-glow); }
+
+  /* Settings drawer */
+  .settings-drawer {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease;
+    border-bottom: 0px solid var(--border);
+  }
+  .settings-drawer.open {
+    max-height: 90px;
+    border-bottom: 1px solid var(--border);
+  }
+  .settings-drawer-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1rem 2rem;
+    background: var(--surface);
+  }
+  .settings-label {
+    font-size: 0.78rem;
+    font-family: var(--mono);
+    color: var(--text-muted);
+    white-space: nowrap;
   }
 
   .api-input {
     flex: 1;
-    background: var(--surface);
+    background: var(--surface2);
     border: 1px solid var(--border);
     color: var(--text);
     font-family: var(--mono);
@@ -113,16 +137,14 @@
     outline: none;
     transition: border-color 0.2s;
   }
-
   .api-input:focus { border-color: var(--accent); }
   .api-input::placeholder { color: var(--text-faint); }
 
   .btn-icon {
-    background: var(--surface);
+    background: var(--surface2);
     border: 1px solid var(--border);
     color: var(--text-muted);
-    width: 38px;
-    height: 38px;
+    width: 38px; height: 38px;
     border-radius: 8px;
     cursor: pointer;
     display: flex;
@@ -130,8 +152,49 @@
     justify-content: center;
     transition: all 0.2s;
     font-size: 1rem;
+    flex-shrink: 0;
   }
   .btn-icon:hover { border-color: var(--border-bright); color: var(--text); }
+
+  /* No-key notice */
+  .no-key-notice {
+    background: rgba(124,109,250,0.08);
+    border: 1px solid rgba(124,109,250,0.25);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .no-key-notice .icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    max-height: calc(100vh - 120px);
+  }
+
+  .panel {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    overflow-y: auto;
+  }
+  .panel-left { border-right: 1px solid var(--border); }
+
+  .panel-title {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+  }
 
   .upload-zone {
     border: 1.5px dashed var(--border-bright);
@@ -144,67 +207,35 @@
     position: relative;
     flex-shrink: 0;
   }
-
   .upload-zone:hover, .upload-zone.drag-over {
     border-color: var(--accent);
     background: var(--accent-glow);
   }
-
   .upload-zone input {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
+    position: absolute; inset: 0; opacity: 0;
+    cursor: pointer; width: 100%; height: 100%;
   }
-
-  .upload-icon {
-    font-size: 2rem;
-    margin-bottom: 0.75rem;
-    opacity: 0.4;
-  }
-
-  .upload-text {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
+  .upload-icon { font-size: 2rem; margin-bottom: 0.75rem; opacity: 0.4; }
+  .upload-text { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
   .upload-text strong { color: var(--accent2); }
 
   .preview-wrap {
-    border-radius: 10px;
-    overflow: hidden;
+    border-radius: 10px; overflow: hidden;
     border: 1px solid var(--border);
     background: var(--surface);
-    flex-shrink: 0;
-    position: relative;
+    flex-shrink: 0; position: relative;
   }
-
   .preview-wrap img {
-    width: 100%;
-    display: block;
-    max-height: 320px;
-    object-fit: contain;
-    background: #111;
+    width: 100%; display: block;
+    max-height: 320px; object-fit: contain; background: #111;
   }
-
   .preview-clear {
-    position: absolute;
-    top: 8px;
-    right: 8px;
+    position: absolute; top: 8px; right: 8px;
     background: rgba(0,0,0,0.7);
     border: 1px solid var(--border-bright);
-    color: var(--text);
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    color: var(--text); width: 28px; height: 28px;
+    border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+    display: flex; align-items: center; justify-content: center;
   }
 
   .context-input {
@@ -215,100 +246,59 @@
     font-size: 0.875rem;
     padding: 12px 14px;
     border-radius: 8px;
-    outline: none;
-    resize: none;
-    transition: border-color 0.2s;
-    line-height: 1.5;
+    outline: none; resize: none;
+    transition: border-color 0.2s; line-height: 1.5;
   }
-
   .context-input:focus { border-color: var(--accent); }
   .context-input::placeholder { color: var(--text-faint); }
 
   .analyze-btn {
     background: var(--accent);
-    color: white;
-    border: none;
-    padding: 14px 24px;
-    border-radius: 10px;
-    font-family: var(--sans);
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    flex-shrink: 0;
+    color: white; border: none;
+    padding: 14px 24px; border-radius: 10px;
+    font-family: var(--sans); font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; flex-shrink: 0;
   }
-
   .analyze-btn:hover:not(:disabled) { background: var(--accent2); transform: translateY(-1px); }
   .analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
   .spinner {
-    width: 16px;
-    height: 16px;
+    width: 16px; height: 16px;
     border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: none;
+    border-top-color: white; border-radius: 50%;
+    animation: spin 0.7s linear infinite; display: none;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .empty-state {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 1rem;
-    color: var(--text-faint);
-    padding: 3rem;
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; gap: 1rem;
+    color: var(--text-faint); padding: 3rem;
   }
-
   .empty-icon { font-size: 2.5rem; opacity: 0.3; }
   .empty-state p { font-size: 0.875rem; line-height: 1.6; max-width: 280px; }
 
-  .result-block {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
+  .result-block { display: flex; flex-direction: column; gap: 1.25rem; }
 
   .result-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
+    border-radius: 12px; overflow: hidden;
   }
-
   .result-card-header {
     padding: 10px 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; align-items: center; gap: 8px;
     border-bottom: 1px solid var(--border);
     background: var(--surface2);
   }
-
   .result-card-header .label {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-weight: 700;
+    font-family: var(--mono); font-size: 0.68rem;
+    letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700;
   }
-
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .dot-red { background: var(--red); }
   .dot-amber { background: var(--amber); }
   .dot-green { background: var(--green); }
@@ -316,68 +306,33 @@
 
   .result-card-body {
     padding: 1rem 1.25rem;
-    font-size: 0.875rem;
-    line-height: 1.75;
-    color: var(--text);
+    font-size: 0.875rem; line-height: 1.75; color: var(--text);
   }
-
   .result-card-body code {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    padding: 1px 6px;
-    border-radius: 4px;
-    color: var(--accent2);
+    font-family: var(--mono); font-size: 0.78rem;
+    background: var(--surface2); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 4px; color: var(--accent2);
   }
-
   .result-card-body pre {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1rem;
-    overflow-x: auto;
-    margin: 0.75rem 0;
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    color: var(--text);
-    line-height: 1.6;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 0.75rem 0;
+    font-family: var(--mono); font-size: 0.78rem; color: var(--text); line-height: 1.6;
   }
 
   .severity-pill {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    display: inline-block; font-family: var(--mono);
+    font-size: 0.65rem; padding: 3px 10px; border-radius: 20px;
+    font-weight: 700; letter-spacing: 0.08em;
   }
-
   .sev-high { background: rgba(248,113,113,0.15); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
   .sev-medium { background: rgba(251,191,36,0.15); color: var(--amber); border: 1px solid rgba(251,191,36,0.3); }
   .sev-low { background: rgba(74,222,128,0.15); color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
 
-  .streaming-cursor {
-    display: inline-block;
-    width: 2px;
-    height: 14px;
-    background: var(--accent2);
-    animation: blink 1s step-end infinite;
-    vertical-align: middle;
-    margin-left: 2px;
-  }
-
-  @keyframes blink { 50% { opacity: 0; } }
-
   .error-toast {
     background: rgba(248,113,113,0.1);
     border: 1px solid rgba(248,113,113,0.3);
-    color: var(--red);
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    display: none;
+    color: var(--red); padding: 12px 16px; border-radius: 8px;
+    font-size: 0.85rem; display: none;
   }
 
   ::-webkit-scrollbar { width: 4px; }
@@ -395,22 +350,33 @@
 <header>
   <div class="logo">Bug<span>Lens</span></div>
   <div class="badge">Powered by Gemma 4</div>
+  <div class="header-right">
+    <div class="key-status" id="keyStatus">
+      <div class="key-dot"></div>
+      <span id="keyStatusText">No API key</span>
+    </div>
+    <button class="settings-btn" id="settingsBtn" title="API Key Settings">⚙️</button>
+  </div>
 </header>
 
+<!-- Settings drawer (hidden by default) -->
+<div class="settings-drawer" id="settingsDrawer">
+  <div class="settings-drawer-inner">
+    <span class="settings-label">API Key</span>
+    <input type="password" class="api-input" id="apiKey" placeholder="Paste your Google AI Studio key (AIza...)">
+    <button class="btn-icon" id="toggleKey" title="Toggle visibility">👁</button>
+  </div>
+</div>
+
 <main>
-  <!-- LEFT PANEL: Input -->
+  <!-- LEFT PANEL -->
   <div class="panel panel-left">
-    <div class="panel-title">Configuration</div>
+    <div class="panel-title">Upload Screenshot</div>
 
-    <div>
-      <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;">Google AI Studio API Key</div>
-      <div class="api-row">
-        <input type="password" class="api-input" id="apiKey" placeholder="AIza...">
-        <button class="btn-icon" id="toggleKey" title="Toggle visibility">👁</button>
-      </div>
+    <div class="no-key-notice" id="noKeyNotice">
+      <span class="icon">🔑</span>
+      <span>Paste your <strong>Google AI Studio API key</strong> via the ⚙️ settings button above to get started.</span>
     </div>
-
-    <div class="panel-title" style="margin-top:0.5rem">Upload Screenshot</div>
 
     <div class="upload-zone" id="uploadZone">
       <input type="file" id="fileInput" accept="image/*">
@@ -427,8 +393,11 @@
     </div>
 
     <div>
-      <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;">Additional context <span style="color:var(--text-faint)">(optional)</span></div>
-      <textarea class="context-input" id="context" rows="3" placeholder="e.g. React app, Node 18, this error happens when user logs in..."></textarea>
+      <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;">
+        Additional context <span style="color:var(--text-faint)">(optional)</span>
+      </div>
+      <textarea class="context-input" id="context" rows="3"
+        placeholder="e.g. React app, Node 18, this error happens when user logs in..."></textarea>
     </div>
 
     <div class="error-toast" id="errorToast"></div>
@@ -439,13 +408,12 @@
     </button>
   </div>
 
-  <!-- RIGHT PANEL: Output -->
+  <!-- RIGHT PANEL -->
   <div class="panel" id="outputPanel">
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">🔬</div>
       <p>Upload a screenshot of a bug, error, or broken UI and BugLens will diagnose what's wrong and how to fix it.</p>
     </div>
-
     <div class="result-block" id="resultBlock" style="display:none"></div>
   </div>
 </main>
@@ -453,6 +421,11 @@
 <script>
   const apiKeyInput = document.getElementById('apiKey');
   const toggleKey = document.getElementById('toggleKey');
+  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsDrawer = document.getElementById('settingsDrawer');
+  const keyStatus = document.getElementById('keyStatus');
+  const keyStatusText = document.getElementById('keyStatusText');
+  const noKeyNotice = document.getElementById('noKeyNotice');
   const fileInput = document.getElementById('fileInput');
   const uploadZone = document.getElementById('uploadZone');
   const previewWrap = document.getElementById('previewWrap');
@@ -468,9 +441,35 @@
 
   let imageBase64 = null;
   let imageMimeType = null;
+  let drawerOpen = false;
+
+  // Settings toggle
+  settingsBtn.addEventListener('click', () => {
+    drawerOpen = !drawerOpen;
+    settingsDrawer.classList.toggle('open', drawerOpen);
+    settingsBtn.classList.toggle('active', drawerOpen);
+    if (drawerOpen) apiKeyInput.focus();
+  });
+
+  // Close drawer when key is entered and user clicks away
+  apiKeyInput.addEventListener('blur', () => {
+    if (apiKeyInput.value.trim()) {
+      drawerOpen = false;
+      settingsDrawer.classList.remove('open');
+      settingsBtn.classList.remove('active');
+    }
+  });
 
   toggleKey.addEventListener('click', () => {
     apiKeyInput.type = apiKeyInput.type === 'password' ? 'text' : 'password';
+  });
+
+  apiKeyInput.addEventListener('input', () => {
+    const hasKey = apiKeyInput.value.trim().length > 0;
+    keyStatus.classList.toggle('set', hasKey);
+    keyStatusText.textContent = hasKey ? 'API key set' : 'No API key';
+    noKeyNotice.style.display = hasKey ? 'none' : 'flex';
+    updateBtn();
   });
 
   fileInput.addEventListener('change', (e) => {
@@ -500,10 +499,8 @@
   }
 
   clearImg.addEventListener('click', () => {
-    imageBase64 = null;
-    imageMimeType = null;
-    fileInput.value = '';
-    preview.src = '';
+    imageBase64 = null; imageMimeType = null;
+    fileInput.value = ''; preview.src = '';
     previewWrap.style.display = 'none';
     uploadZone.style.display = 'block';
     updateBtn();
@@ -513,12 +510,9 @@
     analyzeBtn.disabled = !(imageBase64 && apiKeyInput.value.trim());
   }
 
-  apiKeyInput.addEventListener('input', updateBtn);
-
   function showError(msg) {
     errorToast.textContent = msg;
     errorToast.style.display = 'block';
-    setTimeout(() => errorToast.style.display = 'none', 5000);
   }
 
   analyzeBtn.addEventListener('click', analyze);
@@ -541,7 +535,7 @@
           <div class="label" style="color:var(--accent2)">Gemma 4 is analyzing your screenshot...</div>
         </div>
         <div class="result-card-body" style="color:var(--text-muted); font-style:italic;">
-          Reading the image and diagnosing the issue<span class="streaming-cursor"></span>
+          Reading the image and diagnosing the issue&nbsp;<span style="display:inline-block;width:2px;height:14px;background:var(--accent2);animation:blink 1s step-end infinite;vertical-align:middle"></span>
         </div>
       </div>
     `;
@@ -587,9 +581,7 @@ Be specific and technical. If you see actual error messages or code in the scree
 
       const data = await response.json();
       const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-
       if (!text) throw new Error('No response from Gemma. Check your API key and try again.');
-
       renderResult(text);
 
     } catch (err) {
@@ -628,7 +620,6 @@ Be specific and technical. If you see actual error messages or code in the scree
 
     const sevClass = severity?.toLowerCase().includes('high') ? 'sev-high'
       : severity?.toLowerCase().includes('medium') ? 'sev-medium' : 'sev-low';
-
     const dotClass = severity?.toLowerCase().includes('high') ? 'dot-red'
       : severity?.toLowerCase().includes('medium') ? 'dot-amber' : 'dot-green';
 
@@ -640,7 +631,7 @@ Be specific and technical. If you see actual error messages or code in the scree
           <div class="label" style="color:var(--text-muted)">Diagnosis</div>
           ${severity ? `<span class="severity-pill ${sevClass}" style="margin-left:auto">${severity.replace(/\*/g,'').trim().toUpperCase()}</span>` : ''}
         </div>
-        <div class="result-card-body" style="font-size:1rem; font-weight:500">${formatBody(errorType)}</div>
+        <div class="result-card-body" style="font-size:1rem;font-weight:500">${formatBody(errorType)}</div>
       </div>` : ''}
 
       ${rootCause ? `
@@ -677,14 +668,14 @@ Be specific and technical. If you see actual error messages or code in the scree
           <div class="label" style="color:var(--accent2)">Prevention</div>
         </div>
         <div class="result-card-body">${formatBody(prevention)}</div>
-      </div>` : `
+      </div>` : (!errorType ? `
       <div class="result-card">
         <div class="result-card-header">
           <div class="dot dot-purple"></div>
           <div class="label" style="color:var(--accent2)">Full Analysis</div>
         </div>
         <div class="result-card-body">${formatBody(text)}</div>
-      </div>`}
+      </div>` : '')}
     `;
   }
 </script>
